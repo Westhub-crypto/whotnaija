@@ -1,7 +1,5 @@
-// LoginPage.js
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store';
@@ -10,17 +8,23 @@ import logo from '../assets/logo.png';
 export function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuthStore();
-  const [form, setForm] = useState({ identifier: '', password: '' });
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Stable handlers — no inline arrow functions so React never loses input focus
+  const handleIdentifier = useCallback((e) => setIdentifier(e.target.value), []);
+  const handlePassword = useCallback((e) => setPassword(e.target.value), []);
+  const togglePassword = useCallback(() => setShowPassword(v => !v), []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.identifier || !form.password) {
+    if (!identifier || !password) {
       return toast.error('Please fill in all fields');
     }
     setLoading(true);
-    const result = await login(form.identifier, form.password);
+    const result = await login(identifier, password);
     setLoading(false);
     if (result.success) {
       toast.success('Welcome back! 🃏');
@@ -31,23 +35,13 @@ export function LoginPage() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="auth-container"
-    >
+    <div className="auth-container">
       <div className="hero-bg-effects">
         <div className="hero-orb hero-orb-1" style={{ opacity: 0.08 }} />
         <div className="hero-orb hero-orb-2" style={{ opacity: 0.08 }} />
       </div>
 
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="auth-card"
-      >
+      <div className="auth-card">
         <div className="auth-logo">
           <img src={logo} alt="WhotNaija" className="logo-icon" style={{ objectFit: 'cover' }} />
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 800 }}>
@@ -67,9 +61,12 @@ export function LoginPage() {
                 type="text"
                 className="input"
                 placeholder="Enter email or username"
-                value={form.identifier}
-                onChange={(e) => setForm(p => ({ ...p, identifier: e.target.value }))}
+                value={identifier}
+                onChange={handleIdentifier}
                 autoComplete="username"
+                autoCorrect="off"
+                autoCapitalize="none"
+                spellCheck="false"
               />
             </div>
           </div>
@@ -82,12 +79,12 @@ export function LoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 className="input"
                 placeholder="Enter password"
-                value={form.password}
-                onChange={(e) => setForm(p => ({ ...p, password: e.target.value }))}
+                value={password}
+                onChange={handlePassword}
                 autoComplete="current-password"
                 style={{ paddingRight: 44 }}
               />
-              <button type="button" className="input-eye" onClick={() => setShowPassword(v => !v)}>
+              <button type="button" className="input-eye" onClick={togglePassword}>
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
@@ -110,9 +107,10 @@ export function LoginPage() {
             Register Free
           </Link>
         </p>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
 export default LoginPage;
+    
