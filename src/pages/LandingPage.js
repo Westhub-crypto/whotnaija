@@ -5,10 +5,10 @@ import { Zap, Shield, Trophy, Users, Star, ArrowRight, Play } from 'lucide-react
 import logo from '../assets/logo.png';
 
 const FEATURES = [
-  { icon: <Zap size={22} />, title: 'Real-Time Multiplayer', desc: 'Play live 1v1 or 4v4 games with players across Nigeria or face our expert AI bots.' },
+  { icon: <Zap size={22} />, title: 'Real-Time Multiplayer', desc: 'Play live 1v1 or 4v4 games with players across Nigeria. Get matched in seconds.' },
   { icon: <Shield size={22} />, title: 'Secure & Fair', desc: 'Military-grade security with anti-cheat systems ensure every game is fair and your money is safe.' },
   { icon: <Trophy size={22} />, title: 'Big Cash Prizes', desc: 'Win up to ₦72,000 per game. Stakes from ₦500 to ₦20,000 per player.' },
-  { icon: <Users size={22} />, title: 'Smart Matchmaking', desc: 'Get matched instantly. No opponents? Our Nigerian-named bots step in immediately.' },
+  { icon: <Users size={22} />, title: 'Smart Matchmaking', desc: 'Get matched instantly with real players across Nigeria. Games start fast, around the clock.' },
 ];
 
 const ROOMS = [
@@ -23,7 +23,6 @@ const SUITS = ['⭕', '⭐', '➕', '🔺', '⬛'];
 export default function LandingPage() {
   return (
     <div className="landing-hero">
-      {/* BG Effects */}
       <div className="hero-bg-effects">
         <div className="hero-orb hero-orb-1" />
         <div className="hero-orb hero-orb-2" />
@@ -88,7 +87,7 @@ export default function LandingPage() {
           across Nigeria, and walk away with big winnings. Your ₦500 welcome bonus is waiting.
         </p>
 
-        {/* Floating cards display */}
+        {/* Floating cards */}
         <div style={{ display: 'flex', gap: 12, marginBottom: 48, flexWrap: 'wrap', justifyContent: 'center' }}>
           {SUITS.map((suit, i) => (
             <motion.div
