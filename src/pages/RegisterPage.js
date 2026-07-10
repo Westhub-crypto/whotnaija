@@ -1,17 +1,29 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, Lock, Eye, EyeOff, MapPin, Hash, ShieldCheck } from 'lucide-react';
+import { User, Mail, Phone, Lock, Eye, EyeOff, MapPin, Hash, ShieldCheck, PenLine } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../store';
 import { NIGERIAN_STATES, NIGERIAN_LGAS } from '../utils/socket';
-import api from '../utils/api';
 import logo from '../assets/logo.png';
 
-// ─── InputField defined OUTSIDE the component ───────────────────────────────
-// This is critical — if defined inside, React recreates the component on every
-// keystroke, unmounts the input, and the user loses focus after each character.
-const InputField = ({ label, field, type, icon: Icon, placeholder, optional, hint, value, onChange, error }) => (
+// Hardcoded security questions — no API call needed
+const SECURITY_QUESTIONS = [
+  'What is the name of your first pet?',
+  "What is your mother's maiden name?",
+  'What was the name of your primary school?',
+  'What is the name of the town where you were born?',
+  'What was your childhood nickname?',
+  'What is the name of your oldest sibling?',
+  'What was the name of your first best friend?',
+  'What was the make of your first car?',
+  'What was the name of the street you grew up on?',
+  "What is your oldest cousin's first name?",
+  'Write my own question...',
+];
+
+// ─── InputField defined OUTSIDE component to prevent remount on every keystroke ───
+const InputField = ({ label, type, icon: Icon, placeholder, optional, hint, value, onChange, error, extraStyle }) => (
   <div className="input-group" style={{ marginBottom: 16 }}>
     <label className="input-label">
       {label}{' '}
@@ -25,6 +37,7 @@ const InputField = ({ label, field, type, icon: Icon, placeholder, optional, hin
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        style={extraStyle}
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="none"
@@ -42,24 +55,19 @@ export default function RegisterPage() {
   const { register } = useAuthStore();
 
   const [form, setForm] = useState({
-    firstName: '',
-    lastName: '',
-    middleName: '',
-    username: '',
-    email: '',
-    phone: '',
-    state: '',
-    lga: '',
-    password: '',
-    confirmPassword: '',
+    firstName: '', lastName: '', middleName: '',
+    username: '', email: '', phone: '',
+    state: '', lga: '',
+    password: '', confirmPassword: '',
     referralCode: searchParams.get('ref') || '',
     securityQuestion: '',
+    customQuestion: '',
     securityAnswer: '',
     confirmSecurityAnswer: '',
   });
 
-  const [questions, setQuestions] = useState([]);
   const [lgas, setLgas] = useState([]);
+  const [useCustomQuestion, setUseCustomQuestion] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -67,14 +75,7 @@ export default function RegisterPage() {
   const [errors, setErrors] = useState({});
   const [step, setStep] = useState(1);
 
-  // Load security questions from backend
-  useEffect(() => {
-    api.get('/auth/security-questions')
-      .then(res => setQuestions(res.data.questions || []))
-      .catch(() => {});
-  }, []);
-
-  // Update LGA list whenever state changes
+  // Update LGA list when state changes
   useEffect(() => {
     if (form.state) {
       setLgas(NIGERIAN_LGAS[form.state] || []);
@@ -84,9 +85,19 @@ export default function RegisterPage() {
     }
   }, [form.state]);
 
-  // Stable onChange handlers using useCallback
   const handleChange = useCallback((field) => (e) => {
-    setForm(prev => ({ ...prev, [field]: e.target.value }));
+    const value = e.target.value;
+    if (field === 'securityQuestion') {
+      if (value === 'Write my own question...') {
+        setUseCustomQuestion(true);
+        setForm(prev => ({ ...prev, securityQuestion: '' }));
+      } else {
+        setUseCustomQuestion(false);
+        setForm(prev => ({ ...prev, securityQuestion: value }));
+      }
+    } else {
+      setForm(prev => ({ ...prev, [field]: value }));
+    }
   }, []);
 
   const togglePassword = useCallback(() => setShowPassword(v => !v), []);
@@ -118,7 +129,9 @@ export default function RegisterPage() {
 
   const validateStep3 = () => {
     const errs = {};
-    if (!form.securityQuestion) errs.securityQuestion = 'Please select a security question';
+    const finalQuestion = useCustomQuestion ? form.customQuestion.trim() : form.securityQuestion;
+    if (!finalQuestion) errs.securityQuestion = useCustomQuestion ? 'Please type your question' : 'Please select a question';
+    if (useCustomQuestion && finalQuestion.length < 5) errs.securityQuestion = 'Question must be at least 5 characters';
     if (!form.securityAnswer.trim() || form.securityAnswer.trim().length < 2) errs.securityAnswer = 'Answer must be at least 2 characters';
     if (form.securityAnswer.trim().toLowerCase() !== form.confirmSecurityAnswer.trim().toLowerCase()) {
       errs.confirmSecurityAnswer = 'Answers do not match';
@@ -133,15 +146,14 @@ export default function RegisterPage() {
     else if (step === 2 && validateStep2()) setStep(3);
   };
 
-  const handleBack = () => {
-    setErrors({});
-    setStep(s => s - 1);
-  };
+  const handleBack = () => { setErrors({}); setStep(s => s - 1); };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep3()) return;
     setLoading(true);
+
+    const finalQuestion = useCustomQuestion ? form.customQuestion.trim() : form.securityQuestion;
 
     const result = await register({
       firstName: form.firstName,
@@ -155,7 +167,7 @@ export default function RegisterPage() {
       password: form.password,
       confirmPassword: form.confirmPassword,
       referralCode: form.referralCode || undefined,
-      securityQuestion: form.securityQuestion,
+      securityQuestion: finalQuestion,
       securityAnswer: form.securityAnswer.trim(),
     });
 
@@ -172,9 +184,7 @@ export default function RegisterPage() {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="auth-container"
       style={{ alignItems: 'flex-start', paddingTop: 40 }}
     >
@@ -184,10 +194,8 @@ export default function RegisterPage() {
       </div>
 
       <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        className="auth-card"
-        style={{ maxWidth: 520 }}
+        initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+        className="auth-card" style={{ maxWidth: 520 }}
       >
         <div className="auth-logo">
           <img src={logo} alt="WhotNaija" className="logo-icon" style={{ objectFit: 'cover' }} />
@@ -228,19 +236,19 @@ export default function RegisterPage() {
         {step === 1 && (
           <form onSubmit={handleNext}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 12px' }}>
-              <InputField label="First Name" field="firstName" icon={User} placeholder="Emeka"
+              <InputField label="First Name" icon={User} placeholder="Emeka"
                 value={form.firstName} onChange={handleChange('firstName')} error={errors.firstName} />
-              <InputField label="Last Name" field="lastName" icon={User} placeholder="Okonkwo"
+              <InputField label="Last Name" icon={User} placeholder="Okonkwo"
                 value={form.lastName} onChange={handleChange('lastName')} error={errors.lastName} />
             </div>
-            <InputField label="Middle Name" field="middleName" icon={User} placeholder="Chukwu"
-              optional value={form.middleName} onChange={handleChange('middleName')} />
-            <InputField label="Username" field="username" icon={Hash} placeholder="emeka99"
+            <InputField label="Middle Name" icon={User} placeholder="Chukwu" optional
+              value={form.middleName} onChange={handleChange('middleName')} />
+            <InputField label="Username" icon={Hash} placeholder="emeka99"
               hint="3–20 chars. Letters, numbers, underscores only"
               value={form.username} onChange={handleChange('username')} error={errors.username} />
-            <InputField label="Email Address" field="email" type="email" icon={Mail} placeholder="emeka@gmail.com"
+            <InputField label="Email Address" type="email" icon={Mail} placeholder="emeka@gmail.com"
               value={form.email} onChange={handleChange('email')} error={errors.email} />
-            <InputField label="Phone Number" field="phone" type="tel" icon={Phone} placeholder="08012345678"
+            <InputField label="Phone Number" type="tel" icon={Phone} placeholder="08012345678"
               hint="Nigerian number (080, 081, 070, etc.)"
               value={form.phone} onChange={handleChange('phone')} error={errors.phone} />
             <button type="submit" className="btn btn-primary btn-full" style={{ marginTop: 8 }}>
@@ -252,7 +260,6 @@ export default function RegisterPage() {
         {/* ── STEP 2: Location + password ── */}
         {step === 2 && (
           <form onSubmit={handleNext}>
-            {/* Country — locked */}
             <div className="input-group" style={{ marginBottom: 16 }}>
               <label className="input-label">Country</label>
               <div className="input-with-icon">
@@ -262,30 +269,21 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* State */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 12px' }}>
               <div className="input-group" style={{ marginBottom: 16 }}>
                 <label className="input-label">State</label>
-                <select
-                  className={`select${errors.state ? ' input-error' : ''}`}
-                  value={form.state}
-                  onChange={handleChange('state')}
-                >
+                <select className={`select${errors.state ? ' input-error' : ''}`}
+                  value={form.state} onChange={handleChange('state')}>
                   <option value="">Select State</option>
                   {NIGERIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
                 {errors.state && <p className="error-text">{errors.state}</p>}
               </div>
 
-              {/* LGA — populated from selected state */}
               <div className="input-group" style={{ marginBottom: 16 }}>
                 <label className="input-label">LGA</label>
-                <select
-                  className={`select${errors.lga ? ' input-error' : ''}`}
-                  value={form.lga}
-                  onChange={handleChange('lga')}
-                  disabled={!form.state}
-                >
+                <select className={`select${errors.lga ? ' input-error' : ''}`}
+                  value={form.lga} onChange={handleChange('lga')} disabled={!form.state}>
                   <option value="">{form.state ? 'Select LGA' : 'Select state first'}</option>
                   {lgas.map(l => <option key={l} value={l}>{l}</option>)}
                 </select>
@@ -293,20 +291,15 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Password */}
             <div className="input-group" style={{ marginBottom: 16 }}>
               <label className="input-label">Password</label>
               <div className="input-with-icon">
                 <Lock className="input-icon" size={16} />
-                <input
-                  type={showPassword ? 'text' : 'password'}
+                <input type={showPassword ? 'text' : 'password'}
                   className={`input${errors.password ? ' input-error' : ''}`}
                   placeholder="Min 8 chars, upper+lower+number"
-                  value={form.password}
-                  onChange={handleChange('password')}
-                  style={{ paddingLeft: 44, paddingRight: 44 }}
-                  autoComplete="new-password"
-                />
+                  value={form.password} onChange={handleChange('password')}
+                  style={{ paddingLeft: 44, paddingRight: 44 }} autoComplete="new-password" />
                 <button type="button" className="input-eye" onClick={togglePassword}>
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
@@ -314,20 +307,15 @@ export default function RegisterPage() {
               {errors.password && <p className="error-text">{errors.password}</p>}
             </div>
 
-            {/* Confirm password */}
             <div className="input-group" style={{ marginBottom: 16 }}>
               <label className="input-label">Confirm Password</label>
               <div className="input-with-icon">
                 <Lock className="input-icon" size={16} />
-                <input
-                  type={showConfirm ? 'text' : 'password'}
+                <input type={showConfirm ? 'text' : 'password'}
                   className={`input${errors.confirmPassword ? ' input-error' : ''}`}
                   placeholder="Repeat your password"
-                  value={form.confirmPassword}
-                  onChange={handleChange('confirmPassword')}
-                  style={{ paddingLeft: 44, paddingRight: 44 }}
-                  autoComplete="new-password"
-                />
+                  value={form.confirmPassword} onChange={handleChange('confirmPassword')}
+                  style={{ paddingLeft: 44, paddingRight: 44 }} autoComplete="new-password" />
                 <button type="button" className="input-eye" onClick={toggleConfirm}>
                   {showConfirm ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
@@ -335,7 +323,6 @@ export default function RegisterPage() {
               {errors.confirmPassword && <p className="error-text">{errors.confirmPassword}</p>}
             </div>
 
-            {/* Referral code */}
             <div className="input-group" style={{ marginBottom: 20 }}>
               <label className="input-label">
                 Referral Code <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>(Optional)</span>
@@ -343,8 +330,7 @@ export default function RegisterPage() {
               <div className="input-with-icon">
                 <Hash className="input-icon" size={16} />
                 <input type="text" className="input" placeholder="Enter referral code"
-                  value={form.referralCode} onChange={handleChange('referralCode')}
-                  autoComplete="off" />
+                  value={form.referralCode} onChange={handleChange('referralCode')} autoComplete="off" />
               </div>
             </div>
 
@@ -365,26 +351,53 @@ export default function RegisterPage() {
             }}>
               <ShieldCheck size={18} style={{ color: '#9B6DFF', flexShrink: 0, marginTop: 1 }} />
               <p style={{ fontSize: 13, color: 'var(--text-secondary)', margin: 0 }}>
-                Your security question is used to verify your identity when you forget your password.
-                Remember your answer — spelling must match (not case-sensitive).
+                Choose a security question or write your own. You will be asked to answer it
+                when you want to reset your password. Remember your answer — it is not case-sensitive.
               </p>
             </div>
 
-            {/* Security question dropdown */}
+            {/* Security question — dropdown or custom input */}
             <div className="input-group" style={{ marginBottom: 16 }}>
               <label className="input-label">Security Question</label>
-              <select
-                className={`select${errors.securityQuestion ? ' input-error' : ''}`}
-                value={form.securityQuestion}
-                onChange={handleChange('securityQuestion')}
-              >
-                <option value="">Choose a security question</option>
-                {questions.map(q => <option key={q} value={q}>{q}</option>)}
-              </select>
+
+              {!useCustomQuestion ? (
+                <select
+                  className={`select${errors.securityQuestion ? ' input-error' : ''}`}
+                  value={form.securityQuestion}
+                  onChange={handleChange('securityQuestion')}
+                >
+                  <option value="">— Choose a question —</option>
+                  {SECURITY_QUESTIONS.map(q => (
+                    <option key={q} value={q}>{q}</option>
+                  ))}
+                </select>
+              ) : (
+                <div>
+                  <div className="input-with-icon">
+                    <PenLine className="input-icon" size={16} />
+                    <input
+                      type="text"
+                      className={`input${errors.securityQuestion ? ' input-error' : ''}`}
+                      placeholder="Type your own security question"
+                      value={form.customQuestion}
+                      onChange={handleChange('customQuestion')}
+                      autoComplete="off"
+                      autoFocus
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => { setUseCustomQuestion(false); setForm(p => ({ ...p, customQuestion: '' })); }}
+                    style={{ fontSize: 12, color: 'var(--brand-gold)', background: 'none', border: 'none', cursor: 'pointer', marginTop: 6 }}
+                  >
+                    ← Back to list
+                  </button>
+                </div>
+              )}
               {errors.securityQuestion && <p className="error-text">{errors.securityQuestion}</p>}
             </div>
 
-            {/* Answer */}
+            {/* Your answer */}
             <div className="input-group" style={{ marginBottom: 16 }}>
               <label className="input-label">Your Answer</label>
               <div className="input-with-icon">
