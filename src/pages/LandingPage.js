@@ -1,249 +1,330 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, Shield, Trophy, Users, Star, ArrowRight, Play } from 'lucide-react';
+import { Shield, Trophy, Users, ArrowRight, Play, CheckCircle } from 'lucide-react';
 import logo from '../assets/logo.png';
+import heroImage from '../assets/hero.png';
 
 const FEATURES = [
-  { icon: <Zap size={22} />, title: 'Real-Time Multiplayer', desc: 'Play live 1v1 or 4v4 games with players across Nigeria. Get matched in seconds.' },
-  { icon: <Shield size={22} />, title: 'Secure & Fair', desc: 'Military-grade security with anti-cheat systems ensure every game is fair and your money is safe.' },
-  { icon: <Trophy size={22} />, title: 'Big Cash Prizes', desc: 'Win up to ₦72,000 per game. Stakes from ₦500 to ₦20,000 per player.' },
-  { icon: <Users size={22} />, title: 'Smart Matchmaking', desc: 'Get matched instantly with real players across Nigeria. Games start fast, around the clock.' },
+  { icon: <Trophy size={20} />, title: 'Win Real Cash', desc: 'Stakes from ₦500 to ₦500,000 per player. Win up to ₦1.8 million per game.' },
+  { icon: <Shield size={20} />, title: 'Secure & Fair', desc: 'Anti-cheat system and secure payments. Your money is always safe.' },
+  { icon: <Users size={20} />, title: 'Real Opponents', desc: 'Play against real Nigerians across the country, day and night.' },
 ];
 
-const ROOMS = [
-  { stake: '₦500', prize: '₦900', type: '1v1', color: 'rgba(108,43,217,0.2)', accent: '#9B6DFF' },
-  { stake: '₦2,000', prize: '₦3,600', type: '1v1', color: 'rgba(245,166,35,0.15)', accent: '#F5A623' },
-  { stake: '₦5,000', prize: '₦18,000', type: '4v4', color: 'rgba(232,67,147,0.2)', accent: '#E84393' },
-  { stake: '₦20,000', prize: '₦72,000', type: '4v4', color: 'rgba(0,208,132,0.15)', accent: '#00D084' },
+const PERKS = [
+  '₦500 welcome bonus on registration',
+  'Instant withdrawal to your bank',
+  'Play 1v1 or 4-player rooms',
+  '10% platform fee only',
 ];
-
-const SUITS = ['⭕', '⭐', '➕', '🔺', '⬛'];
 
 export default function LandingPage() {
   return (
-    <div className="landing-hero">
-      <div className="hero-bg-effects">
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-orb hero-orb-2" />
-        <div className="hero-orb hero-orb-3" />
-      </div>
+    <div style={{ background: '#06060F', minHeight: '100vh', overflowX: 'hidden' }}>
 
-      {/* Navbar */}
+      {/* ── NAVBAR ── */}
       <nav style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '20px 40px', position: 'relative', zIndex: 10,
-        borderBottom: '1px solid rgba(255,255,255,0.04)',
+        padding: '16px 24px', position: 'relative', zIndex: 20,
+        background: 'rgba(6,6,15,0.9)', backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        position: 'sticky', top: 0,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src={logo} alt="WhotNaija" style={{ width: 40, height: 40, borderRadius: 10 }} />
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 800 }}>
+          <img src={logo} alt="WhotNaija" style={{ width: 38, height: 38, borderRadius: 9 }} />
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 800, color: '#fff' }}>
             Whot<span style={{ color: 'var(--brand-gold)' }}>Naija</span>
           </span>
         </div>
-        <div style={{ display: 'flex', gap: 12 }}>
+        <div style={{ display: 'flex', gap: 10 }}>
           <Link to="/login" className="btn btn-ghost btn-sm">Login</Link>
           <Link to="/register" className="btn btn-primary btn-sm">Play Now</Link>
         </div>
       </nav>
 
-      {/* Hero */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        style={{
-          flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center',
-          justifyContent: 'center', textAlign: 'center', padding: '60px 24px',
-          position: 'relative', zIndex: 1,
-        }}
-      >
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            background: 'rgba(245,166,35,0.1)', border: '1px solid rgba(245,166,35,0.2)',
-            borderRadius: 'var(--radius-full)', padding: '6px 16px', marginBottom: 24,
-          }}
-        >
-          <Star size={14} style={{ color: 'var(--brand-gold)' }} />
-          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--brand-gold)' }}>
-            Nigeria's #1 Online Whot Card Game
-          </span>
-        </motion.div>
+      {/* ── HERO ── */}
+      <section style={{
+        minHeight: '92vh',
+        background: 'linear-gradient(135deg, #1a0050 0%, #3a0080 40%, #6C2BD9 70%, #E84393 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+      }}>
+        {/* Sunburst background lines */}
+        <div style={{
+          position: 'absolute', inset: 0, opacity: 0.15,
+          backgroundImage: 'repeating-conic-gradient(from 0deg, transparent 0deg, transparent 8deg, rgba(255,255,255,0.3) 8deg, rgba(255,255,255,0.3) 9deg)',
+          backgroundPosition: 'center',
+        }} />
 
-        <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 'clamp(40px, 8vw, 80px)',
-          fontWeight: 800, lineHeight: 1.05, marginBottom: 24, maxWidth: 800,
+        {/* Decorative shapes */}
+        {[
+          { top: '10%', left: '5%', size: 12, color: '#fff' },
+          { top: '20%', right: '8%', size: 16, color: '#F5A623' },
+          { top: '60%', left: '3%', size: 10, color: '#fff' },
+          { top: '75%', right: '5%', size: 14, color: '#E84393' },
+          { top: '40%', left: '30%', size: 8, color: '#fff', shape: 'plus' },
+          { top: '15%', right: '25%', size: 10, color: '#fff', shape: 'plus' },
+        ].map((d, i) => (
+          <div key={i} style={{
+            position: 'absolute', top: d.top, left: d.left, right: d.right,
+            width: d.size, height: d.size, borderRadius: d.shape === 'plus' ? 0 : '50%',
+            background: d.color, opacity: 0.6,
+          }} />
+        ))}
+
+        <div style={{
+          maxWidth: 1200, margin: '0 auto', padding: '40px 24px',
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          alignItems: 'center', gap: 40, width: '100%', position: 'relative', zIndex: 2,
         }}>
-          Play Whot.<br />
-          <span className="text-gradient">Win Real Cash.</span>
-        </h1>
-
-        <p style={{ fontSize: 18, color: 'var(--text-secondary)', maxWidth: 540, marginBottom: 40, lineHeight: 1.7 }}>
-          The authentic Nigerian Whot experience — stake real money, play against opponents
-          across Nigeria, and walk away with big winnings. Your ₦500 welcome bonus is waiting.
-        </p>
-
-        {/* Floating cards */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 48, flexWrap: 'wrap', justifyContent: 'center' }}>
-          {SUITS.map((suit, i) => (
-            <motion.div
-              key={i}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: [0, -8, 0], opacity: 1 }}
-              transition={{ delay: i * 0.1, y: { repeat: Infinity, duration: 2 + i * 0.3, ease: 'easeInOut' } }}
-              style={{
-                width: 56, height: 76, background: 'var(--bg-card)',
-                border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8,
-                display: 'flex', flexDirection: 'column', alignItems: 'center',
-                justifyContent: 'center', gap: 4, fontSize: 20,
-              }}
-            >
-              {suit}
-              <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 700 }}>{i * 3 + 2}</span>
-            </motion.div>
-          ))}
-        </div>
-
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <Link to="/register" className="btn btn-primary btn-lg">
-            <Play size={18} /> Start Playing Free
-          </Link>
-          <Link to="/login" className="btn btn-secondary btn-lg">
-            Login to Account
-          </Link>
-        </div>
-
-        {/* Stats */}
-        <div style={{ display: 'flex', gap: 40, marginTop: 56, flexWrap: 'wrap', justifyContent: 'center' }}>
-          {[
-            { value: '50,000+', label: 'Players' },
-            { value: '₦500', label: 'Welcome Bonus' },
-            { value: '₦72,000', label: 'Max Prize' },
-            { value: '24/7', label: 'Live Games' },
-          ].map((stat, i) => (
-            <div key={i} style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 800 }} className="text-gradient">
-                {stat.value}
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{stat.label}</div>
+          {/* Left — text */}
+          <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              background: 'rgba(255,255,255,0.15)', borderRadius: 100,
+              padding: '6px 16px', marginBottom: 24,
+              backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.2)',
+            }}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#fff', letterSpacing: '0.05em' }}>
+                🏆 Nigeria's #1 Whot Card Game
+              </span>
             </div>
-          ))}
-        </div>
-      </motion.section>
 
-      {/* Room Cards */}
-      <section style={{ padding: '60px 40px', position: 'relative', zIndex: 1 }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, textAlign: 'center', marginBottom: 8 }}>
-          Choose Your <span className="text-gradient">Battle Room</span>
-        </h2>
-        <p className="text-secondary" style={{ textAlign: 'center', marginBottom: 40 }}>
-          Multiple stakes. Maximum thrill. Platform takes only 10%.
-        </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, maxWidth: 960, margin: '0 auto' }}>
-          {ROOMS.map((room, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
+            <h1 style={{
+              fontFamily: 'var(--font-display)', fontWeight: 900,
+              fontSize: 'clamp(36px, 6vw, 72px)', lineHeight: 1.05,
+              color: '#fff', marginBottom: 20,
+            }}>
+              Play Whot.<br />
+              <span style={{ color: '#F5A623' }}>Win Real</span><br />
+              <span style={{ color: '#fff' }}>Cash.</span>
+            </h1>
+
+            <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.85)', marginBottom: 32, lineHeight: 1.7, maxWidth: 440 }}>
+              The real Nigerian Whot experience online. Stake money, beat opponents, 
+              and withdraw your winnings instantly to your bank account.
+            </p>
+
+            {/* Perks list */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 36 }}>
+              {PERKS.map((perk, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <CheckCircle size={16} style={{ color: '#F5A623', flexShrink: 0 }} />
+                  <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)' }}>{perk}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+              <Link to="/register" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                background: '#F5A623', color: '#000', fontWeight: 800,
+                padding: '14px 28px', borderRadius: 12, fontSize: 15,
+                textDecoration: 'none', boxShadow: '0 8px 24px rgba(245,166,35,0.4)',
+              }}>
+                <Play size={18} /> Start Playing Free
+              </Link>
+              <Link to="/login" style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                background: 'rgba(255,255,255,0.15)', color: '#fff', fontWeight: 700,
+                padding: '14px 28px', borderRadius: 12, fontSize: 15,
+                textDecoration: 'none', border: '1px solid rgba(255,255,255,0.3)',
+                backdropFilter: 'blur(8px)',
+              }}>
+                Login to Account
+              </Link>
+            </div>
+
+            {/* Stats row */}
+            <div style={{ display: 'flex', gap: 32, marginTop: 44, flexWrap: 'wrap' }}>
+              {[
+                { value: '50,000+', label: 'Players' },
+                { value: '₦1.8M', label: 'Max Prize' },
+                { value: '24/7', label: 'Live Games' },
+              ].map((s, i) => (
+                <div key={i}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 900, color: '#F5A623' }}>{s.value}</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Right — hero image */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}
+          >
+            <img
+              src={heroImage}
+              alt="Play WhotNaija"
               style={{
-                background: room.color, border: `1px solid ${room.accent}30`,
-                borderRadius: 'var(--radius-lg)', padding: 24,
-                display: 'flex', flexDirection: 'column', gap: 12,
+                width: '100%', maxWidth: 520,
+                borderRadius: 24, objectFit: 'cover',
+                filter: 'drop-shadow(0 20px 60px rgba(0,0,0,0.5))',
               }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: room.accent, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                  {room.type}
-                </span>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                  {room.type === '1v1' ? '2 players' : '4 players'}
-                </span>
-              </div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 800, color: room.accent }}>
-                {room.stake}
-              </div>
-              <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-                Win up to <strong style={{ color: '#fff' }}>{room.prize}</strong>
-              </div>
-            </motion.div>
-          ))}
+              onError={(e) => {
+                // Fallback if image not found — show floating cards
+                e.target.style.display = 'none';
+              }}
+            />
+            {/* Floating card decorations always visible */}
+            <div style={{ position: 'absolute', display: 'flex', gap: 12, bottom: 40 }}>
+              {['⭕','⭐','➕','🔺','⬛'].map((suit, i) => (
+                <motion.div
+                  key={i}
+                  animate={{ y: [0, -12, 0] }}
+                  transition={{ repeat: Infinity, duration: 2 + i * 0.4, ease: 'easeInOut', delay: i * 0.2 }}
+                  style={{
+                    width: 52, height: 72, background: 'rgba(255,255,255,0.12)',
+                    backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.25)',
+                    borderRadius: 10, display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center', gap: 4, fontSize: 18,
+                  }}
+                >
+                  {suit}
+                  <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', fontWeight: 700 }}>{i * 3 + 2}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
+
+        {/* Bottom wave */}
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0, height: 60,
+          background: 'linear-gradient(to top, #06060F, transparent)',
+        }} />
       </section>
 
-      {/* Features */}
-      <section style={{ padding: '60px 40px', position: 'relative', zIndex: 1 }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 32, textAlign: 'center', marginBottom: 40 }}>
-          Why <span className="text-gradient">WhotNaija</span>?
+      {/* ── FEATURES ── */}
+      <section style={{ padding: '80px 24px', maxWidth: 1100, margin: '0 auto' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, textAlign: 'center', marginBottom: 8, color: '#fff' }}>
+          Why <span style={{ color: 'var(--brand-gold)' }}>WhotNaija</span>?
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20, maxWidth: 960, margin: '0 auto' }}>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: 48, fontSize: 15 }}>
+          Built for Nigerians. Fair, fast, and real.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
           {FEATURES.map((f, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="card"
+              style={{
+                background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+                borderRadius: 20, padding: 28,
+              }}
             >
               <div style={{
-                width: 44, height: 44, background: 'rgba(245,166,35,0.1)',
-                borderRadius: 10, display: 'flex', alignItems: 'center',
+                width: 48, height: 48, background: 'rgba(245,166,35,0.1)',
+                borderRadius: 12, display: 'flex', alignItems: 'center',
                 justifyContent: 'center', color: 'var(--brand-gold)', marginBottom: 16,
               }}>
                 {f.icon}
               </div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{f.title}</h3>
-              <p style={{ fontSize: 14, lineHeight: 1.6 }}>{f.desc}</p>
+              <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 8, color: '#fff' }}>{f.title}</h3>
+              <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--text-secondary)' }}>{f.desc}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{ padding: '60px 40px 80px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+      {/* ── ROOM SHOWCASE ── */}
+      <section style={{ padding: '0 24px 80px', maxWidth: 1100, margin: '0 auto' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, textAlign: 'center', marginBottom: 8, color: '#fff' }}>
+          Choose Your <span style={{ color: 'var(--brand-gold)' }}>Battle Room</span>
+        </h2>
+        <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: 48, fontSize: 15 }}>
+          From ₦500 to ₦500,000 stakes. Win up to ₦1.8 million.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 14 }}>
+          {[
+            { stake: '₦500', prize: '₦1,800', type: '4v4', accent: '#9B6DFF', bg: 'rgba(108,43,217,0.15)' },
+            { stake: '₦1,000', prize: '₦3,600', type: '4v4', accent: '#F5A623', bg: 'rgba(245,166,35,0.12)' },
+            { stake: '₦5,000', prize: '₦18,000', type: '4v4', accent: '#E84393', bg: 'rgba(232,67,147,0.15)' },
+            { stake: '₦20,000', prize: '₦72,000', type: '4v4', accent: '#00D084', bg: 'rgba(0,208,132,0.12)' },
+            { stake: '₦100,000', prize: '₦360,000', type: '4v4', accent: '#F5A623', bg: 'rgba(245,166,35,0.12)' },
+            { stake: '₦500,000', prize: '₦1.8M', type: '4v4', accent: '#E84393', bg: 'rgba(232,67,147,0.15)' },
+          ].map((room, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.08 }}
+              style={{
+                background: room.bg, border: `1px solid ${room.accent}40`,
+                borderRadius: 16, padding: '20px 16px', textAlign: 'center',
+                aspectRatio: '1', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}
+            >
+              <span style={{ fontSize: 11, fontWeight: 700, color: room.accent, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                {room.type}
+              </span>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: room.accent }}>
+                {room.stake}
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)' }}>Win</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 800, color: '#fff' }}>
+                {room.prize}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section style={{ padding: '0 24px 80px' }}>
         <div style={{
-          background: 'var(--grad-brand)', borderRadius: 'var(--radius-xl)',
-          padding: '60px 40px', maxWidth: 700, margin: '0 auto', position: 'relative', overflow: 'hidden',
+          background: 'linear-gradient(135deg, #6C2BD9, #E84393)',
+          borderRadius: 24, padding: '60px 40px',
+          maxWidth: 760, margin: '0 auto', textAlign: 'center',
+          position: 'relative', overflow: 'hidden',
         }}>
-          <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, background: 'rgba(255,255,255,0.08)', borderRadius: '50%' }} />
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 800, marginBottom: 16 }}>
+          <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, background: 'rgba(255,255,255,0.07)', borderRadius: '50%' }} />
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 36, fontWeight: 900, color: '#fff', marginBottom: 12 }}>
             Ready to Play? 🃏
           </h2>
-          <p style={{ fontSize: 16, marginBottom: 32, opacity: 0.9, color: '#fff' }}>
-            Register now and get ₦500 welcome bonus instantly.
-            No hidden fees. Withdraw anytime.
+          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.85)', marginBottom: 32 }}>
+            Register now and get ₦500 welcome bonus instantly. No hidden fees.
           </p>
-          <Link to="/register" className="btn" style={{
-            background: '#fff', color: '#0C0C1E', fontWeight: 700, padding: '14px 36px',
-            borderRadius: 'var(--radius-md)', fontSize: 16, display: 'inline-flex', gap: 8,
+          <Link to="/register" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            background: '#fff', color: '#1a0050', fontWeight: 800,
+            padding: '15px 36px', borderRadius: 12, fontSize: 16,
+            textDecoration: 'none',
           }}>
             Create Free Account <ArrowRight size={18} />
           </Link>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* ── FOOTER ── */}
       <footer style={{
-        borderTop: '1px solid var(--border-subtle)', padding: '24px 40px',
+        borderTop: '1px solid var(--border-subtle)', padding: '24px',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        position: 'relative', zIndex: 1, flexWrap: 'wrap', gap: 12,
+        flexWrap: 'wrap', gap: 12, maxWidth: 1100, margin: '0 auto',
       }}>
-        <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700 }}>
-          Whot<span style={{ color: 'var(--brand-gold)' }}>Naija</span>
-        </span>
-        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
-          © 2024 WhotNaija. 18+ only. Play responsibly.
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <img src={logo} alt="WhotNaija" style={{ width: 28, height: 28, borderRadius: 6 }} />
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: '#fff' }}>
+            Whot<span style={{ color: 'var(--brand-gold)' }}>Naija</span>
+          </span>
+        </div>
+        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>© 2025 WhotNaija. 18+ only. Play responsibly.</span>
         <div style={{ display: 'flex', gap: 16 }}>
-          <a href="#" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>Terms</a>
-          <a href="#" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>Privacy</a>
-          <a href="#" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>Support</a>
+          {['Terms', 'Privacy', 'Support'].map(l => (
+            <a key={l} href="#" style={{ fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>{l}</a>
+          ))}
         </div>
       </footer>
     </div>
   );
-}
+    }
+   
