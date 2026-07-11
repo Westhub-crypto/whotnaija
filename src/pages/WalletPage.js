@@ -52,7 +52,7 @@ export default function WalletPage() {
 
   const handleOpenWithdraw = () => {
     if (!hasDeposited) {
-      toast.error('You must make a deposit before you can withdraw');
+      toast.error('You need to make a deposit of at least ₦1,000 before you can withdraw');
       return;
     }
     setShowWithdrawModal(true);
@@ -159,11 +159,11 @@ export default function WalletPage() {
         <div style={{ padding: 24 }}>
           {/* Balance card */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="balance-card" style={{ marginBottom: 24 }}>
-            <p style={{ opacity: 0.9, fontSize: 14, marginBottom: 4 }}>Wallet Balance</p>
-            <div className="balance-amount">{formatNaira(balance)}</div>
+            <p style={{ opacity: 0.9, fontSize: 14, marginBottom: 4 }}>Total Balance</p>
+            <div className="balance-amount">{formatNaira(balance + bonusBalance)}</div>
             {bonusBalance > 0 && (
               <p style={{ fontSize: 13, marginTop: 8, opacity: 0.85 }}>
-                🎁 + {formatNaira(bonusBalance)} bonus {hasDeposited ? 'available' : '(unlocks after deposit)'}
+                🎁 + {formatNaira(bonusBalance)} bonus {hasDeposited ? '· fully withdrawable' : '· playable now, withdraw after ₦1,000 deposit'}
               </p>
             )}
             <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
@@ -278,7 +278,7 @@ export default function WalletPage() {
             <motion.div className="modal-box" initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
               <button className="modal-close" onClick={() => setShowWithdrawModal(false)}><X size={16} /></button>
               <h3 className="modal-title">Withdraw Funds</h3>
-              <p className="text-secondary text-sm mb-4">Minimum withdrawal: ₦1,000 • Available: {formatNaira(balance)}</p>
+              <p className="text-secondary text-sm mb-4">Minimum withdrawal: ₦1,000 • Available to withdraw: {formatNaira(balance)}</p>
 
               <div className="input-group">
                 <label className="input-label">Select Bank</label>
